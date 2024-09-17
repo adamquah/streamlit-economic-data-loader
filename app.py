@@ -19,6 +19,9 @@ unemployment_rate = pd.read_csv(unemployment_rate_path, skiprows=0)
 commodity_price = pd.read_csv(commodity_price_path, skiprows=0)
 inflation_rate = pd.read_csv(inflation_rate_path, skiprows=0)
 
+# Add EDA header
+st.header("DATA CLEANING)")
+
 # Display the head of each dataset
 st.subheader("Dataset Previews")
 st.write("### Exchange Rate Dataset")
@@ -106,3 +109,118 @@ st.write("### Inflation Rate Dataset")
 st.write("Number of Duplicates:", inflation_rate.duplicated().sum())
 st.write("Missing Values per Column:")
 st.write(inflation_rate.isnull().sum())
+
+
+
+
+# Add EDA header
+st.header("Interest Rate")
+
+# Load the dataset (replace with your actual data path or logic to load the data)
+interest_rate_path = "data/Interest_Rate.csv"
+interest_rate = pd.read_csv(interest_rate_path)
+
+# Display the dataset's missing values
+st.subheader("Missing Values in Interest Rate Dataset")
+missing_values = interest_rate.isnull().sum()
+st.write(missing_values)
+
+# Clean the dataset by dropping columns where all values are NaN and filling NaN with 0
+st.subheader("Cleaned Interest Rate Dataset")
+interest_rate_cleaned = interest_rate.dropna(axis=1, how='all')
+interest_rate_cleaned.fillna(0, inplace=True)
+
+# Display the first 50 rows of the cleaned dataset
+st.write("First 50 rows of the cleaned Interest Rate Dataset")
+st.write(interest_rate_cleaned.head(50))
+
+
+import streamlit as st
+
+# Define the actual columns and new interest rate lists
+actual_columns = ['Year', 'Aruba', 'Afghanistan', 'Angola', 'Albania', 'Argentina', 'Armenia', 
+                   'Antigua and Barbuda', 'Australia', 'Azerbaijan', 'Burundi', 'Benin', 
+                   'Burkina Faso', 'Bangladesh', 'Bulgaria', 'Bahrain', 'Bahamas, The', 
+                   'Bosnia and Herzegovina', 'Belarus', 'Belize', 'Bolivia', 'Brazil', 
+                   'Barbados', 'Brunei Darussalam', 'Bhutan', 'Botswana', 'Canada', 
+                   'Switzerland', 'Chile', 'China', "Cote d'Ivoire", 'Congo, Dem. Rep.', 
+                   'Colombia', 'Comoros', 'Cabo Verde', 'Costa Rica', 'Czechia', 'Dominica', 
+                   'Dominican Republic', 'Algeria', 'Egypt, Arab Rep.', 'Ethiopia', 'Fiji', 
+                   'Micronesia, Fed. Sts.', 'United Kingdom', 'Georgia', 'Guinea', 'Gambia, The', 
+                   'Guinea-Bissau', 'Grenada', 'Guatemala', 'Guyana', 'Hong Kong SAR, China', 
+                   'Honduras', 'Croatia', 'Haiti', 'Hungary', 'Indonesia', 'India', 
+                   'Iran, Islamic Rep.', 'Iraq', 'Iceland', 'Israel', 'Italy', 'Jamaica', 
+                   'Jordan', 'Japan', 'Kenya', 'Kyrgyz Republic', 'St. Kitts and Nevis', 
+                   'Korea, Rep.', 'Kuwait', 'Lao PDR', 'Lebanon', 'Liberia', 'Libya', 
+                   'St. Lucia', 'Sri Lanka', 'Lesotho', 'Macao SAR, China', 'Moldova', 
+                   'Madagascar', 'Maldives', 'Mexico', 'North Macedonia', 'Mali', 'Malta', 
+                   'Myanmar', 'Montenegro', 'Mongolia', 'Mozambique', 'Mauritania', 
+                   'Mauritius', 'Malawi', 'Malaysia', 'Namibia', 'Niger', 'Nigeria', 
+                   'Nicaragua', 'Netherlands', 'Norway', 'New Zealand', 'Oman', 'Pakistan', 
+                   'Panama', 'Peru', 'Philippines', 'Papua New Guinea', 'Paraguay', 
+                   'West Bank and Gaza', 'Qatar', 'Romania', 'Russian Federation', 
+                   'Rwanda', 'Senegal', 'Singapore', 'Solomon Islands', 'Sierra Leone', 
+                   'San Marino', 'Somalia', 'Serbia', 'South Sudan', 'Sao Tome and Principe', 
+                   'Suriname', 'Sweden', 'Eswatini', 'Seychelles', 'Togo', 'Thailand', 
+                   'Tajikistan', 'Timor-Leste', 'Tonga', 'Trinidad and Tobago', 'Tanzania', 
+                   'Uganda', 'Ukraine', 'Uruguay', 'United States', 'Uzbekistan', 
+                   'St. Vincent and the Grenadines', 'Venezuela, RB', 'Viet Nam', 
+                   'Vanuatu', 'Samoa', 'Kosovo', 'Yemen, Rep.', 'South Africa', 'Zambia', 'Zimbabwe']
+
+new_interest_rate = [
+    'Year', 'Australia', 'United Arab Emirates', 'Bangladesh', 'Brazil', 'Canada',
+    'Euro area', 'Switzerland', 'China', 'United Kingdom', 'Hong Kong SAR, China',
+    'Indonesia', 'India', 'Japan', 'Korea, Rep.', 'Mexico', 'Malaysia',
+    'Philippines', 'Russian Federation', 'Saudi Arabia', 'Singapore',
+    'Thailand', 'Turkiye', 'United States'
+]
+
+# Calculate missing columns
+missing_columns = [col for col in actual_columns if col not in new_interest_rate]
+
+# Streamlit app
+st.title('Missing Columns Finder')
+
+st.write("**Actual Columns List:**")
+st.write(actual_columns)
+
+st.write("**New Interest Rate Columns List:**")
+st.write(new_interest_rate)
+
+st.write("**Missing Columns:**")
+st.write(missing_columns)
+
+
+# List of new interest rate columns
+new_interest_rate = [
+    'Year', 'Australia', 'Bangladesh', 'Brazil', 'Canada', 'Switzerland',
+    'China', 'United Kingdom', 'Hong Kong SAR, China', 'Indonesia', 'India',
+    'Japan', 'Korea, Rep.', 'Mexico', 'Malaysia', 'Philippines', 'Russian Federation',
+    'Singapore', 'Thailand', 'United States'
+]
+
+# Streamlit app
+st.title('Interest Rate Data Cleaner')
+
+st.write("**Original Columns:**")
+st.write(interest_rate_cleaned.columns.tolist())
+
+# Clean column names
+interest_rate_cleaned.columns = interest_rate_cleaned.columns.str.strip()
+
+# Show cleaned columns
+st.write("**Cleaned Columns:**")
+st.write(interest_rate_cleaned.columns.tolist())
+
+# Select relevant columns
+interest_rate_selected = interest_rate_cleaned[new_interest_rate]
+
+# Save the cleaned data
+if st.button('Save to CSV'):
+    file_path = "/content/drive/MyDrive/Classroom/BMCS2114MachineLearning/Assignment/DataSets/Interest_Rate_selected.csv"
+    interest_rate_selected.to_csv(file_path, index=False)
+    st.success(f"Data saved to {file_path}")
+
+# Show the cleaned and selected data
+st.write("**Selected Data (First 20 rows):**")
+st.write(interest_rate_selected.head(20))
