@@ -1,9 +1,9 @@
 # Updated requirements.txt
-pip==24.2
-streamlit==1.25.0
+pip
+streamlit
 pandas
 numpy
 plotly
 scipy
 matplotlib
-pillow==9.5.0
+pillow
