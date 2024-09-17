@@ -4,12 +4,12 @@ import pandas as pd
 st.title("Economic Data Loader")
 
 # Paths to your datasets (relative paths within your GitHub repo or local paths)
-exchange_rate_path = "Data/Exchange_Rate.csv"
-interest_rate_path = "Data/Interest_Rate.csv"
-gdp_path = "Data/GDP.csv"
-unemployment_rate_path = "Data/Unemployment_Rate.csv"
-commodity_price_path = "Data/Commodity_Price.csv"
-inflation_rate_path = "Data/Inflation_Rate.csv"
+exchange_rate_path = "data/Exchange_Rate.csv"
+interest_rate_path = "data/Interest_Rate.csv"
+gdp_path = "data/GDP.csv"
+unemployment_rate_path = "data/Unemployment_Rate.csv"
+commodity_price_path = "data/Commodity_Price.csv"
+inflation_rate_path = "data/Inflation_Rate.csv"
 
 # Load the datasets
 exchange_rate = pd.read_csv(exchange_rate_path)
