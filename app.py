@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from scipy.stats import zscore
 import plotly.graph_objects as go
-
+import matplotlib.pyplot as plt
 
 st.title("Economic Data Loader")
 
@@ -291,3 +291,50 @@ fig.update_layout(
 
 # Display the 3D plot in the Streamlit app
 st.plotly_chart(fig)
+
+
+st.title("Interest Rate Trends Over Time")
+
+# Assuming the dataset is already loaded
+# Load the interest_rate_selected dataset (adjust the path as necessary)
+interest_rate_path = "data/Interest_Rate.csv"
+interest_rate_selected = pd.read_csv(interest_rate_path)
+
+# If 'Year' is a column in the dataset, set it as the index
+if 'Year' in interest_rate_selected.columns:
+    interest_rate_selected.set_index('Year', inplace=True)
+
+# Calculate average, min, and max interest rates across all countries for each year
+average_rates = interest_rate_selected.mean(axis=1)
+min_rates = interest_rate_selected.min(axis=1)
+max_rates = interest_rate_selected.max(axis=1)
+
+# Display calculated statistics
+st.subheader("Interest Rate Statistics")
+st.write("Average Rates:")
+st.write(average_rates.head())
+
+st.write("Minimum Rates:")
+st.write(min_rates.head())
+
+st.write("Maximum Rates:")
+st.write(max_rates.head())
+
+# Plot the interest rate trends
+fig, ax = plt.subplots(figsize=(14, 7))
+
+ax.plot(average_rates.index, average_rates, label='Average Interest Rate', color='blue', linestyle='-', marker='o')
+ax.plot(min_rates.index, min_rates, label='Minimum Interest Rate', color='red', linestyle='--', marker='x')
+ax.plot(max_rates.index, max_rates, label='Maximum Interest Rate', color='green', linestyle='-.', marker='s')
+
+ax.fill_between(average_rates.index, min_rates, max_rates, color='grey', alpha=0.2)
+
+ax.set_title("Aggregated Interest Rate Trends Over Time")
+ax.set_xlabel("Year")
+ax.set_ylabel("Interest Rate (%)")
+ax.legend()
+ax.grid(True, linestyle='--', alpha=0.7)
+plt.tight_layout()
+
+# Display the plot in Streamlit
+st.pyplot(fig)
