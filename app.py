@@ -432,3 +432,54 @@ ax.grid(True)
 st.pyplot(fig)
 
 
+st.title("Developed vs Developing Countries: Interest Rate Comparison")
+
+# Load your dataset here or use the already loaded dataset in your app
+interest_rate_selected = pd.read_csv("data/Interest_Rate.csv")
+
+# Lists of countries
+developed_countries = [
+    'Australia', 'Canada', 'Switzerland', 'United Kingdom', 'Hong Kong SAR, China',
+    'Japan', 'Singapore', 'Korea, Rep.', 'United States'
+]
+
+developing_countries = [
+    'Bangladesh', 'Brazil', 'China', 'Indonesia', 'India', 'Malaysia', 'Philippines',
+    'Russian Federation', 'Thailand', 'Mexico'
+]
+
+st.write("Available columns in the dataset:", interest_rate_selected.columns)
+
+# Check for missing countries
+missing_developed = [country for country in developed_countries if country not in interest_rate_selected.columns]
+missing_developing = [country for country in developing_countries if country not in interest_rate_selected.columns]
+
+if missing_developed or missing_developing:
+    st.warning(f"Missing countries in developed list: {missing_developed}")
+    st.warning(f"Missing countries in developing list: {missing_developing}")
+else:
+    # Calculate average interest rates
+    developed_rates = interest_rate_selected[developed_countries].mean(axis=1)
+    developing_rates = interest_rate_selected[developing_countries].mean(axis=1)
+    average_developed = developed_rates.mean()
+    average_developing = developing_rates.mean()
+    difference = average_developed - average_developing
+
+    st.write(f"**Average Interest Rate for Developed Countries:** {average_developed:.2f}%")
+    st.write(f"**Average Interest Rate for Developing Countries:** {average_developing:.2f}%")
+    st.write(f"**Difference in Average Interest Rates:** {difference:.2f}%")
+
+    # Plot the comparison
+    fig, ax = plt.subplots(figsize=(10, 6))
+    bars = ax.bar(['Developed Countries', 'Developing Countries'], [average_developed, average_developing], color=['blue', 'orange'])
+
+    for bar in bars:
+        yval = bar.get_height()
+        ax.text(bar.get_x() + bar.get_width()/2, yval + 0.05, f'{yval:.2f}%', ha='center', va='bottom')
+
+    ax.set_ylabel('Average Interest Rate (%)')
+    ax.set_title('Comparison of Average Interest Rates')
+    ax.grid(axis='y', linestyle='--')
+
+    # Display the plot in Streamlit
+    st.pyplot(fig)
