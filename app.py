@@ -4,6 +4,7 @@ import numpy as np
 from scipy.stats import zscore
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 st.title("Economic Data Loader")
 
@@ -335,6 +336,55 @@ ax.set_ylabel("Interest Rate (%)")
 ax.legend()
 ax.grid(True, linestyle='--', alpha=0.7)
 plt.tight_layout()
+
+# Display the plot in Streamlit
+st.pyplot(fig)
+
+
+st.title("3D Trend of Interest Rates")
+
+# Load the dataset (adjust the path as necessary)
+interest_rate_path = "data/Interest_Rate.csv"
+interest_rate_selected = pd.read_csv(interest_rate_path)
+
+# If 'Year' is a column in the dataset, set it as the index
+if 'Year' in interest_rate_selected.columns:
+    interest_rate_selected.set_index('Year', inplace=True)
+
+years = interest_rate_selected.index
+
+# Compute the yearly average interest rates
+yearly_average = interest_rate_selected.mean(axis=1)
+
+# Convert yearly_average to a NumPy array for 3D plotting
+yearly_average_array = yearly_average.values
+
+# Calculate the number of countries with rates below the yearly average
+below_average_counts = (interest_rate_selected.values < yearly_average_array[:, None]).sum(axis=1)
+
+# 3D Plot of interest rates trend
+fig = plt.figure(figsize=(14, 10))
+ax = fig.add_subplot(111, projection='3d')
+
+# X: Years, Y: Number of countries below average, Z: Yearly average rates
+X = years
+Y = below_average_counts
+Z = yearly_average_array
+
+# Create the 3D scatter plot
+scatter = ax.scatter(X, Y, Z, c=Z, cmap='viridis', marker='o', s=100)
+cbar = fig.colorbar(scatter, ax=ax, shrink=0.5, aspect=5)
+cbar.set_label('Yearly Average Interest Rate', fontsize=12)
+
+# Set plot titles and labels
+ax.set_title('3D Trend of Countries Below Average Interest Rates and Yearly Average Rates', fontsize=16, weight='bold')
+ax.set_xlabel('Year', fontsize=12)
+ax.set_ylabel('Countries Below Average', fontsize=12)
+ax.set_zlabel('Yearly Average Interest Rate', fontsize=12)
+
+# Adjust view angle
+ax.view_init(elev=30, azim=135)
+ax.grid(True)
 
 # Display the plot in Streamlit
 st.pyplot(fig)
