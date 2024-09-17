@@ -1,5 +1,9 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+from scipy.stats import zscore
+import plotly.graph_objects as go
+
 
 st.title("Economic Data Loader")
 
@@ -224,3 +228,66 @@ if st.button('Save to CSV'):
 # Show the cleaned and selected data
 st.write("**Selected Data (First 20 rows):**")
 st.write(interest_rate_selected.head(20))
+
+
+# Title of the Streamlit app
+st.title("Interactive 3D Outlier Detection in Interest Rates")
+
+# Load the dataset (replace with your actual path or integrate with data loading section)
+interest_rate_path = "data/Interest_Rate.csv"
+interest_rate_selected = pd.read_csv(interest_rate_path, index_col=0)
+
+# Compute z-scores
+z_scores = interest_rate_selected.apply(zscore, axis=0)
+
+# Threshold for outliers
+threshold = 3
+
+# Count outliers
+outliers = (np.abs(z_scores) > threshold).sum(axis=0)
+
+# Extract years and countries for plotting
+years = interest_rate_selected.index
+countries = interest_rate_selected.columns
+
+# Initialize Z matrix for outliers
+Z = np.zeros((len(countries), len(years)))
+
+for i, country in enumerate(countries):
+    Z[i, :] = (np.abs(z_scores[country]) > threshold).astype(int).values
+
+# Prepare data for 3D plot
+X, Y = np.meshgrid(range(len(years)), range(len(countries)))
+X_flat = X.flatten()
+Y_flat = Y.flatten()
+Z_flat = Z.flatten()
+
+# Create 3D scatter plot using Plotly
+fig = go.Figure(data=[go.Scatter3d(
+    x=X_flat,
+    y=Y_flat,
+    z=Z_flat,
+    mode='markers',
+    marker=dict(
+        size=8,
+        color=Z_flat,
+        colorscale='Viridis',
+        colorbar=dict(title='Count of Outliers')
+    )
+)])
+
+# Update layout
+fig.update_layout(
+    scene=dict(
+        xaxis_title='Year',
+        yaxis_title='Country',
+        zaxis_title='Count of Outliers',
+        xaxis=dict(tickvals=list(range(0, len(years), 5)), ticktext=years[::5]),
+        yaxis=dict(tickvals=list(range(0, len(countries), 3)), ticktext=countries[::3])
+    ),
+    title='Interactive 3D Chart of Outliers in Interest Rates',
+    autosize=True
+)
+
+# Display the 3D plot in the Streamlit app
+st.plotly_chart(fig)
