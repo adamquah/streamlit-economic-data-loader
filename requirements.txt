@@ -1,0 +1,8 @@
+pip
+streamlit
+pandas
+numpy
+plotly
+scipy
+matplotlib
+pillow
