@@ -388,3 +388,45 @@ ax.grid(True)
 
 # Display the plot in Streamlit
 st.pyplot(fig)
+
+st.title("3D Interest Rate Trends Visualization")
+
+# Load your dataset here or use the already loaded dataset in your app
+interest_rate_selected = pd.read_csv("data/Interest_Rate.csv")
+
+# Ensure 'Year' is the index
+if 'Year' in interest_rate_selected.columns:
+    interest_rate_selected.set_index('Year', inplace=True)
+
+# Calculate yearly average and counts above average
+yearly_average = interest_rate_selected.mean(axis=1)
+yearly_average_array = yearly_average.values
+above_average_counts = (interest_rate_selected.values > yearly_average_array[:, None]).sum(axis=1)
+
+# Create 3D plot
+fig = plt.figure(figsize=(14, 10))
+ax = fig.add_subplot(111, projection='3d')
+
+X = interest_rate_selected.index  # Year
+Y = above_average_counts  # Count of countries above average
+Z = yearly_average_array  # Yearly average
+
+# Scatter plot
+scatter = ax.scatter(X, Y, Z, c=Z, cmap='plasma', marker='o', s=100)
+
+# Add colorbar
+cbar = fig.colorbar(scatter, ax=ax, shrink=0.5, aspect=5)
+cbar.set_label('Yearly Average Interest Rate', fontsize=12)
+
+# Set titles and labels
+ax.set_title('3D Trend of Countries Above Average Interest Rates and Yearly Average Rates', fontsize=16, weight='bold')
+ax.set_xlabel('Year', fontsize=12)
+ax.set_ylabel('Countries Above Average', fontsize=12)
+ax.set_zlabel('Yearly Average Interest Rate', fontsize=12)
+
+# Set view angle
+ax.view_init(elev=30, azim=135)
+ax.grid(True)
+
+# Display the plot in Streamlit
+st.pyplot(fig)
