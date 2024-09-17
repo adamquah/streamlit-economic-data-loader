@@ -1,9 +1,0 @@
-# Updated requirements.txt
-pip
-streamlit
-pandas
-numpy
-plotly
-scipy
-matplotlib
-pillow
